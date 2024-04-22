@@ -6,6 +6,9 @@ const Type = {
     NUMBER: "NUMBER"
 };
 
+
+
+
 class Lexer {
     constructor(input) {
         this.i = input.split(/\n/); // Split input string on newlines
@@ -13,14 +16,23 @@ class Lexer {
     }
 
     lex() {
-        // Patterns to check
+        // Patterns to check NEED TO UPDATE THEM
   
-        const p_add = /^\+$/;
-        const p_sub = /^\-$/;
-        const p_mul = /^\*$/;
-        const p_div = /^\($/;
-        const p_identifier = /^[a-zA-Z_]\w*$/;
-        const p_number = /^\d+(\.\d+)?$/;
+        const p_singleLineComment = /\$.*$/;
+        const p_multiLineComment = /\$\$\$(.|\n)*?\$\$\$/;
+        const p_singleCommand = /[^\s{}]+(?=\(\{\))/;
+        const p_blockOfCode = /\\_\/((.|\n)*?)\\_\//;
+        const p_assignmentOperator = /~/;
+        const p_unaryOperator = /dirty/;
+        const p_integerVariable = /\bOz\b/;
+        const p_stringVariable = /\b\*(.*?)\*\b/;
+        const p_booleanVariable = /\bisDecaf\b/;
+        const p_multiply = /\bcaffeine\b/;
+        const p_division = /\bfrappe\b/;
+        const p_add = /\bsprinkles\b/;
+        const p_subtract = /\bice\b/;
+        
+
 
         for (let line of this.i) {
             if (line.trim().startsWith('$')) {
