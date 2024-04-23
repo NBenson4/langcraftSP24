@@ -9,6 +9,7 @@
 JavaChip is a domain-specific programming language designed for coffee enthusiasts and baristas alike. It offers a unique syntax inspired by the world of coffee, allowing users to express themselves in a language that resonates with their passion for java. With features tailored to the coffee experience, JavaChip aims to provide a fun and intuitive way to write code while enjoying a cup of your favorite brew.
 
 ### Instructions:
+- download the code from the repo and run it in vscode + node environment etc
 
 ### Demo Code
 Insert Demo Code
