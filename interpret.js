@@ -4,6 +4,7 @@ const Type = {
     EOC: "ENDOFCOMMAND",
     EQUALS: "EQUALS",
     NUMBER: "NUMBER"
+    
 };
 
 
@@ -28,12 +29,12 @@ class Lexer {
         const p_stringVariable = /\b\*(.*?)\*\b/;
         const p_booleanVariable = /\bisDecaf\b/;
         const p_multiply = /\bcaffeine\b/;
-        const p_division = /\bfrappe\b/;
+        const p_divide = /\bfrappe\b/;
         const p_add = /\bsprinkles\b/;
         const p_subtract = /\bice\b/;
         
 
-
+// need to figure out if this logic works for both multi & single
         for (let line of this.i) {
             if (line.trim().startsWith('$')) {
                 // SKIP LINE COMMENT
@@ -46,16 +47,31 @@ class Lexer {
             for (let token of tokens) {
                 if (p_add.test(token)) {
                     this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_sub.test(token)) {
+                } else if (p_subtract.test(token)) {
                     this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_mul.test(token)) {
+                } else if (p_multiply.test(token)) {
                     this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_div.test(token)) {
+                } else if (p_divide.test(token)) {
                     this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_identifier.test(token)) {
+                } else if (p_integerVariable.test(token)) {
                     this.out.push({"Type": Type.IDENTIFIER, "value": token});
-                } else if (p_number.test(token)) {
-                    this.out.push({"Type": Type.NUMBER, "value": parseFloat(token)});
+                } else if (p_stringVariable.test(token)) {
+                    this.out.push({"Type": Type.IDENTIFIER, "value": token});
+                } else if (p_booleanVariable.test(token)) {
+                    this.out.push({"Type": Type.IDENTIFIER, "value": token});
+                } else if (p_singleCommand.test(token)) {
+                        this.out.push({"Type": Type.EOC, "value": token.match(p_singleCommand)[0]});
+                } else if (p_blockOfCode.test(token)) {
+                        this.out.push({"Type": Type.BLOCK, "value": token.match(p_blockOfCode)[1]});
+                } else if (p_assignmentOperator.test(token)) {
+                        this.out.push({"Type": Type.EQUALS, "value": token});
+                } else if (p_unaryOperator.test(token)) {
+                        this.out.push({"Type": Type.OPERATOR, "value": token});
+                } else {
+                    // Check for number
+                    if (!isNaN(token)) {
+                        this.out.push({"Type": Type.NUMBER, "value": parseFloat(token)});
+                    }
                 }
             }
         }
