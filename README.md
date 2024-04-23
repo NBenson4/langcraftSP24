@@ -1,11 +1,14 @@
-# langcraftSP24
-Final term project -- Programming Languages; CIS 333; SP 2024
+###### langcraftSP24 -- Programming Languages; CIS 333; SP 2024
+###### Nick Benson, Kaleb Powell, Caroline Conrad
 ---
 
 # JavaChip ☕️
----
+
+
 ### Overview:
 JavaChip is a domain-specific programming language designed for coffee enthusiasts and baristas alike. It offers a unique syntax inspired by the world of coffee, allowing users to express themselves in a language that resonates with their passion for java. With features tailored to the coffee experience, JavaChip aims to provide a fun and intuitive way to write code while enjoying a cup of your favorite brew.
+
+### Instructions:
 
 ### Demo Code
 Insert Demo Code
@@ -38,5 +41,8 @@ Insert Demo Code
 
 ### Grammar:
 JavaChip's grammar is designed to be intuitive and easy to understand, with syntax rules that mimic common coffee-related actions and terminology.
+[NEED TO ADD 
 ___
  ☕️ Feel free to brew up some code with JavaChip! ☕️
+___
+### State of the Language:
