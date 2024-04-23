@@ -16,11 +16,11 @@ Insert Demo Code
 - Keywords: Keywords such as "order" and "dirty" add flavor to JavaChip's lexicon, enabling users to express themselves in a language that speaks to their love for coffee.
 - Built-in Functions: JavaChip comes with built-in functions tailored to coffee-related tasks, making it easy to perform common operations such as calculating caffeine content or customizing your drink order.
 ### Syntax Rules:
-- Single Line Comments: Use $ to add comments to your code
-- Multi-Line Comments: Enclose multi-line comments between $$$
-- Single Commands: End each command with ({)
-- Blocks of Code: Begin and end blocks of code with \_/
-- Assignment Operator: Use ~ for variable assignment
+- Single Line Comments: Use '$' to add comments to your code
+- Multi-Line Comments: Enclose multi-line comments between '$$$'
+- Single Commands: End each command with '({)'
+- Blocks of Code: Begin and end blocks of code with '\_/'
+- Assignment Operator: Use '~' for variable assignment
 - Operators: JavaChip provides operators such as 'caffeine' for multiplication, 'frappe' for division, 'sprinkles' for addition, and 'ice' for subtraction
 
 
