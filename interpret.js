@@ -17,29 +17,44 @@ class Lexer {
     }
 
     lex() {
-        // Patterns to check NEED TO UPDATE THEM
-  
+        // Patterns to check 
         const p_singleLineComment = /\$.*$/;
         const p_multiLineComment = /\$\$\$(.|\n)*?\$\$\$/;
         const p_singleCommand = /[^\s{}]+(?=\(\{\))/;
         const p_blockOfCode = /\\_\/((.|\n)*?)\\_\//;
         const p_assignmentOperator = /~/;
         const p_unaryOperator = /dirty/;
-        const p_integerVariable = /\bOz\b/;
+        const p_number = /^-?\d+(\.\d+)?$/;
+        const p_integerVariable = /^-?\d+(\.\d+)?$/;
         const p_stringVariable = /\b\*(.*?)\*\b/;
         const p_booleanVariable = /\bisDecaf\b/;
         const p_multiply = /\bcaffeine\b/;
         const p_divide = /\bfrappe\b/;
         const p_add = /\bsprinkles\b/;
         const p_subtract = /\bice\b/;
-        
+        const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; // Regular expression for identifying identifiers
 
-// need to figure out if this logic works for both multi & single
+
+        let inMultiLineComment = false;
+
         for (let line of this.i) {
-            if (line.trim().startsWith('$')) {
-                // SKIP LINE COMMENT
-                continue;
+            if (inMultiLineComment) {
+                // If inside a multiline comment, check for the end 
+                if (line.includes('$$${')) {
+                    inMultiLineComment = false; // End of the multiline comment
+                }
+                continue; // Skip processing this line
             }
+    
+            if (line.trim().startsWith('$')) {
+                // Skip single-line comments
+                continue;
+            } else if (line.startsWith('$$${')) {
+                // Start of multiline comment
+                inMultiLineComment = true;
+                continue; // Skip processing this line
+            }
+    
 
             // Split the line into tokens based on whitespace
             const tokens = line.split(/\s+/);
@@ -67,6 +82,10 @@ class Lexer {
                         this.out.push({"Type": Type.EQUALS, "value": token});
                 } else if (p_unaryOperator.test(token)) {
                         this.out.push({"Type": Type.OPERATOR, "value": token});
+                } else if (p_number.test(token)) {
+                        this.out.push({"Type": Type.NUMBER, "value": parseFloat(token)});
+                } else if (p_identifier.test(token)) {
+                        this.out.push({"Type": Type.IDENTIFIER, "value": token});
                 } else {
                     // Check for number
                     if (!isNaN(token)) {
@@ -161,24 +180,24 @@ class Interpreter {
     }
 }
 
-
-let debug = false;
+let debug = true;
 let input = "";
 
 const fs = require('fs');
 
 // Check if the input file argument is provided
 if (process.argv.length < 3) {
-    console.log("Usage: node script.js <inputfile>");
+    console.log("Usage: node interpret.js demo.chip");
     process.exit(1);
 }
 
 // Get the filename from command line arguments
-const filePath = demo.chip;
+const filePath = process.argv[2];
 
 try {
     // Read the file synchronously
     input = fs.readFileSync(filePath, 'utf8');
+    console.log("here");
 } catch (err) {
     console.error(err);
 }
