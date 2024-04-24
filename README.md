@@ -1,10 +1,11 @@
-###### langcraftSP24 -- Programming Languages; CIS 333; SP 2024
-###### Nick Benson, Kaleb Powell, Caroline Conrad
+
+![JAVACHIP GIF](JAVACHIP.gif)
+
+###### Created by: Nick Benson, Kaleb Powell, Caroline Conrad
 ---
 
+
 # JavaChip ☕️
-
-
 ### Overview:
 JavaChip is a domain-specific programming language designed for coffee enthusiasts and baristas alike. It offers a unique syntax inspired by the world of coffee, allowing users to express themselves in a language that resonates with their passion for java. With features tailored to the coffee experience, JavaChip aims to provide a fun and intuitive way to write code while enjoying a cup of your favorite brew.
 
@@ -47,3 +48,6 @@ ___
  ☕️ Feel free to brew up some code with JavaChip! ☕️
 ___
 ### State of the Language:
+
+---
+###### langcraftSP24 -- Programming Languages; CIS 333; SP 2024
