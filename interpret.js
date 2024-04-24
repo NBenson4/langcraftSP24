@@ -99,11 +99,17 @@ class Parser {
     parse() {
         if (!this.tokens.length) {
             return null;  // Early exit if there are no tokens
+            
+
         }
+
+    
 
         // Start with the first number literal
         if (this.tokens[this.index].Type !== Type.NUMBER) {
             throw new Error("Syntax Error: Expected a number at the beginning of the expression.");
+            
+
         }
         let left = {
             'Type': 'Literal',
@@ -193,7 +199,7 @@ const filePath = process.argv[2];
 try {
     // Read the file synchronously
     input = fs.readFileSync(filePath, 'utf8');
-    console.log("here");
+    
 } catch (err) {
     console.error(err);
 }
