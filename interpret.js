@@ -60,39 +60,26 @@ class Lexer {
             const tokens = line.split(/\s+/);
 
             for (let token of tokens) {
-                if (p_add.test(token)) {
-                    this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_subtract.test(token)) {
-                    this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_multiply.test(token)) {
-                    this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_divide.test(token)) {
-                    this.out.push({"Type": Type.OPERATOR, "value": token});
-                } else if (p_integerVariable.test(token)) {
-                    this.out.push({"Type": Type.IDENTIFIER, "value": token});
-                } else if (p_stringVariable.test(token)) {
-                    this.out.push({"Type": Type.IDENTIFIER, "value": token});
-                } else if (p_booleanVariable.test(token)) {
-                    this.out.push({"Type": Type.IDENTIFIER, "value": token});
-                } else if (p_singleCommand.test(token)) {
-                        this.out.push({"Type": Type.EOC, "value": token.match(p_singleCommand)[0]});
+                // Check for different types of tokens
+                if (p_singleCommand.test(token)) {
+                    this.out.push({ "Type": Type.EOC, "value": token.match(p_singleCommand)[0] });
                 } else if (p_blockOfCode.test(token)) {
-                        this.out.push({"Type": Type.BLOCK, "value": token.match(p_blockOfCode)[1]});
+                    this.out.push({ "Type": Type.BLOCK, "value": token.match(p_blockOfCode)[1] });
                 } else if (p_assignmentOperator.test(token)) {
-                        this.out.push({"Type": Type.EQUALS, "value": token});
+                    this.out.push({ "Type": Type.EQUALS, "value": token });
                 } else if (p_unaryOperator.test(token)) {
-                        this.out.push({"Type": Type.OPERATOR, "value": token});
+                    this.out.push({ "Type": Type.OPERATOR, "value": token });
                 } else if (p_number.test(token)) {
-                        this.out.push({"Type": Type.NUMBER, "value": parseFloat(token)});
+                    this.out.push({ "Type": Type.NUMBER, "value": parseFloat(token) });
+                } else if (p_integerVariable.test(token) || p_stringVariable.test(token) || p_booleanVariable.test(token)) {
+                    this.out.push({ "Type": Type.IDENTIFIER, "value": token });
+                } else if (p_multiply.test(token) || p_divide.test(token) || p_add.test(token) || p_subtract.test(token)) {
+                    this.out.push({ "Type": Type.OPERATOR, "value": token });
                 } else if (p_identifier.test(token)) {
-                        this.out.push({"Type": Type.IDENTIFIER, "value": token});
-                } else {
-                    // Check for number
-                    if (!isNaN(token)) {
-                        this.out.push({"Type": Type.NUMBER, "value": parseFloat(token)});
-                    }
+                    this.out.push({ "Type": Type.IDENTIFIER, "value": token });
                 }
             }
+
         }
 
         return this.out;
@@ -154,21 +141,22 @@ class Interpreter {
     constructor() {}
 
     evaluateAST(ast) {
-        if (ast['Type'] === 'Literal') {
-            return parseInt(ast['value']);  // Convert the value to an integer and return it
-        } else if (ast['Type'] === 'BinaryOperation') {
-            const leftVal = this.evaluateAST(ast['left']);  // Recursively evaluate the left child
-            const rightVal = this.evaluateAST(ast['right']);  // Recursively evaluate the right child
+        switch (ast['Type']) {
+            case 'Literal':
+                return parseInt(ast['value']);  // Convert the value to an integer and return it
+            case 'BinaryOperation':
+                const leftVal = this.evaluateAST(ast['left']);  // Recursively evaluate the left child
+                const rightVal = this.evaluateAST(ast['right']);  // Recursively evaluate the right child
 
             // Perform the operation based on the operator
             switch (ast['operator']) {
-                case '+':
+                case 'sprinkles':
                     return leftVal + rightVal;
-                case '-':
+                case 'ice':
                     return leftVal - rightVal;
-                case '*':
+                case 'caffeine':
                     return leftVal * rightVal;
-                case '/':
+                case 'frappe':
                     if (rightVal === 0) {
                         throw new Error("Division by zero");  // Handle division by zero
                     }
@@ -176,9 +164,17 @@ class Interpreter {
                 default:
                     throw new Error(`Unsupported operator: ${ast['operator']}`);
             }
+            case 'Assignment':
+                // Evaluate the value of the assignment and store it in the variable
+                const value = this.evaluateAST(ast['value']);
+                // For simplicity, assume the variable is already defined and just return its value
+                return value;
+            default:
+                throw new Error(`Unsupported node type: ${ast['Type']}`);
+        }
         }
     }
-}
+
 
 let debug = true;
 let input = "";
