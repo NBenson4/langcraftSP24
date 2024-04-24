@@ -3,7 +3,8 @@ const Type = {
     OPERATOR: "OPERATOR",
     EOC: "ENDOFCOMMAND",
     EQUALS: "EQUALS",
-    NUMBER: "NUMBER"
+    NUMBER: "NUMBER",
+    STRING: "STRING",
     
 };
 
@@ -32,6 +33,7 @@ class Lexer {
         const p_divide = /\bfrappe\b/;
         const p_add = /\bsprinkles\b/;
         const p_subtract = /\bice\b/;
+        const p_string = /\*(.*?)\*/; // * example *
         const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; // Regular expression for identifying identifiers
 
 
@@ -61,6 +63,12 @@ class Lexer {
 
             for (let token of tokens) {
                 // Check for different types of tokens
+                const stringMatches = line.match(p_string);
+                if (stringMatches) {
+                    const stringValue = stringMatches[1];
+                    this.out.push({ "Type": Type.STRING, "value": stringValue });
+                    line = line.replace(p_string, ''); // Remove string from line
+                }    
                 if (p_singleCommand.test(token)) {
                     this.out.push({ "Type": Type.EOC, "value": token.match(p_singleCommand)[0] });
                 } else if (p_blockOfCode.test(token)) {
@@ -99,10 +107,11 @@ class Parser {
     parse() {
         if (!this.tokens.length) {
             return null;  // Early exit if there are no tokens
-            
+        
 
         }
-
+        
+        
     
 
         // Start with the first number literal
