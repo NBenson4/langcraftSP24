@@ -1,0 +1,14 @@
+$ This is a file for our demo code
+1 sprinkles 1
+*hi*
+5 ice 4
+$$$
+ This is a comment ...
+$$$
+roast var1 ~ *Hello world!* ({)
+oz var2 ~ 10 ({)
+oz var3 ~ 5 ({)
+oz ans ~ var2 sprinkles var3 ({) 
+$ addition
+oz ans ~ var2 ice var3 ({)
+$ subtraction
