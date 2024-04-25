@@ -5,6 +5,7 @@ const Type = {
     EQUALS: "EQUALS",
     NUMBER: "NUMBER",
     STRING: "STRING",
+    ORDER: "ORDER"
     
 };
 
@@ -21,6 +22,7 @@ class Lexer {
         // Patterns to check 
         const p_singleLineComment = /\$.*$/;
         const p_multiLineComment = /\$\$\$(.|\n)*?\$\$\$/;
+        const p_orderCommand = /^order$/; // Regular expression for the "order" keyword to print to console
         const p_singleCommand = /[^\s{}]+(?=\(\{\))/;
         const p_blockOfCode = /\\_\/((.|\n)*?)\\_\//;
         const p_assignmentOperator = /~/;
@@ -85,6 +87,9 @@ class Lexer {
                     this.out.push({ "Type": Type.OPERATOR, "value": token });
                 } else if (p_identifier.test(token)) {
                     this.out.push({ "Type": Type.IDENTIFIER, "value": token });
+                } else if (p_orderCommand.test(token)) {
+                    this.out.push({ "Type": Type.ORDER, "value": token });
+                    continue;
                 }
             }
 
@@ -111,15 +116,19 @@ class Parser {
 
         }
         
-        
+        const firstToken = this.tokens[this.index];
     
-
-        // Start with the first number literal
-        if (this.tokens[this.index].Type !== Type.NUMBER) {
-            throw new Error("Syntax Error: Expected a number at the beginning of the expression.");
-            
-
+        if (firstToken.Type === Type.STRING) {
+            // If the first token is a string, handle it appropriately
+            return {
+                'Type': 'StringLiteral',
+                'value': firstToken.value
+            };
+        } else if (firstToken.Type !== Type.NUMBER) {
+            // If the first token is not a number or string, throw an error
+            throw new Error("Syntax Error: Expected a number or string at the beginning of the expression.");
         }
+
         let left = {
             'Type': 'Literal',
             'value': this.tokens[this.index].value
@@ -158,7 +167,12 @@ class Interpreter {
     evaluateAST(ast) {
         switch (ast['Type']) {
             case 'Literal':
-                return parseInt(ast['value']);  // Convert the value to an integer and return it
+                // Only return integer values for arithmetic operations
+                if (Number.isInteger(ast['value'])) {
+                    return ast['value'];
+                } else {
+                    throw new Error(`Unsupported literal type: ${typeof ast['value']}`);
+                }
             case 'BinaryOperation':
                 const leftVal = this.evaluateAST(ast['left']);  // Recursively evaluate the left child
                 const rightVal = this.evaluateAST(ast['right']);  // Recursively evaluate the right child
@@ -179,11 +193,19 @@ class Interpreter {
                 default:
                     throw new Error(`Unsupported operator: ${ast['operator']}`);
             }
+        
             case 'Assignment':
                 // Evaluate the value of the assignment and store it in the variable
                 const value = this.evaluateAST(ast['value']);
                 // For simplicity, assume the variable is already defined and just return its value
                 return value;
+            case 'StringLiteral': // Handle the StringLiteral node type
+                return ast['value']; // Simply return the string value
+            
+            case 'Order': // Handle the "order" command
+                console.log(ast['value']); // Print the value of the "order" command
+                return null; // Return null since "order" command doesn't have a value
+            
             default:
                 throw new Error(`Unsupported node type: ${ast['Type']}`);
         }
