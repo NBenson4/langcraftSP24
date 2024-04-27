@@ -241,17 +241,28 @@ if (debug) {
 }
 
 const lines = input.split(/\n/);
-const lexer = new Lexer(input);
 
-for (let line of lines) {
-    if (line.trim() === '') {
+const lexer = new Lexer(input);
+const interpreter = new Interpreter();
+let parser;
+
+for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (line.trim()===''){
         continue;
     }
+
     console.log("\n--------CURRENT LINE--------");
     console.log(line); // Debugging output to see the current line being processed
 
+    const lexer = new Lexer(line);
+
     // Tokenize the line
     const tokens = lexer.lex(line);
+
+    // Initialize the parser with the tokens
+    parser = new Parser(tokens);
 
     if (debug) {
         console.log("\n--------TOKENS--------");
@@ -263,7 +274,6 @@ for (let line of lines) {
     }
 
     // Parse the tokens into an Abstract Syntax Tree (AST)
-    const parser = new Parser(tokens);
     const ast = parser.parse();
 
     if (debug) {
@@ -272,7 +282,6 @@ for (let line of lines) {
     }
 
     // Evaluate the AST to get the result
-    const interpreter = new Interpreter();
     const result = interpreter.evaluateAST(ast);
 
     // Print the result of each line
@@ -282,11 +291,3 @@ for (let line of lines) {
     // Move to the next token for the parser
     parser.nextToken();
 }
-
-
-// //if (debug) {
-//     console.log("\n--------RESULT--------");
-//     console.log(` The result of your line of code is: ${result}\n`);
-// } else {
-//     console.log(result);
-// }}
