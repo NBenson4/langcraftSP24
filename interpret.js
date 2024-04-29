@@ -41,7 +41,7 @@ class Lexer {
 
 
         let inMultiLineComment = false;
-
+       
         for (let line of this.i) {
             if (inMultiLineComment) {
                 // If inside a multiline comment, check for the end 
@@ -104,10 +104,13 @@ class Parser {
     constructor(tokens) {
         this.tokens = tokens;
         this.index = 0;
+        this.current_token = this.tokens[this.index] || null;
     }
 
     nextToken() {
         this.index++;
+        this.current_token = this.tokens[this.index] || null;
+
     }
 
     parse() {
@@ -220,74 +223,44 @@ let input = "";
 
 const fs = require('fs');
 
-// Check if the input file argument is provided
-if (process.argv.length < 3) {
-    console.log("Usage: node interpret.js demo.chip");
-    process.exit(1);
-}
-
-// Get the filename from command line arguments
 const filePath = process.argv[2];
 
 try {
     // Read the file synchronously
     input = fs.readFileSync(filePath, 'utf8');
-    
 } catch (err) {
     console.error(err);
 }
+
+
 if (debug) {
     console.log("\n--------INPUT--------");
     console.log(input);
 }
 
-const lines = input.split(/\n/);
-const lexer = new Lexer(input);
+const tokens = new Lexer(input).lex();
 
-for (let line of lines) {
-    if (line.trim() === '') {
-        continue;
+if (debug) {
+    console.log("\n--------TOKENS--------");
+    console.log("");
+    for (let t of tokens) {
+        console.log(t);
     }
-    console.log("\n--------CURRENT LINE--------");
-    console.log(line); // Debugging output to see the current line being processed
-
-    // Tokenize the line
-    const tokens = lexer.lex(line);
-
-    if (debug) {
-        console.log("\n--------TOKENS--------");
-        console.log("");
-        for (let t of tokens) {
-            console.log(t);
-        }
-        console.log("");
-    }
-
-    // Parse the tokens into an Abstract Syntax Tree (AST)
-    const parser = new Parser(tokens);
-    const ast = parser.parse();
-
-    if (debug) {
-        console.log("\n--------AST--------");
-        console.log(ast);
-    }
-
-    // Evaluate the AST to get the result
-    const interpreter = new Interpreter();
-    const result = interpreter.evaluateAST(ast);
-
-    // Print the result of each line
-    console.log("\n--------RESULT--------");
-    console.log(` The result of your line of code is: ${result}\n`);
-
-    // Move to the next token for the parser
-    parser.nextToken();
+    console.log("");
 }
 
+const ast = new Parser(tokens).parse();
 
-// //if (debug) {
-//     console.log("\n--------RESULT--------");
-//     console.log(` The result of your line of code is: ${result}\n`);
-// } else {
-//     console.log(result);
-// }}
+if (debug) {
+    console.log("\n--------AST--------");
+    console.log(ast);
+}
+
+const result = new Interpreter().evaluateAST(ast);
+
+if (debug) {
+    console.log("\n--------RESULT--------");
+    console.log(` The result of your line of code is: ${result}\n`);
+} else {
+    console.log(result);
+}
