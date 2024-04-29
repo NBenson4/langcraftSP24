@@ -1,0 +1,205 @@
+// coffeeInterpreter.js
+
+class CoffeeLexer {
+    constructor(input) {
+        this.lines = input.split(/\n/); // Split input string on newlines
+        this.tokens = [];
+    }
+
+    lex() {
+        const patterns = {
+            singleLineComment: /^\$/,
+            multiLineCommentStart: /^\$\$\$$/,
+            multiLineCommentEnd: /^\$\$\$$/,
+            singleCommand: /\(\{\)$/,
+            blockOfCodeStart: /_\/$/,
+            blockOfCodeEnd: /\\_\/$/,
+            assignmentOperator: /~/,
+            operator: /^(caffeine|frappe|sprinkles|ice)$/,
+            identifier: /^[a-zA-Z_]\w*$/,
+            number: /^\d+(\.\d+)?$/,
+            stringVariable: /^\*(.*?)\*$/,
+            booleanVariable: /^isDecaf$/,
+            integerVariable: /^Oz$/
+        };
+
+        for (let line of this.lines) {
+            let tokens = line.trim().split(/\s+/); // Split line into tokens based on whitespace
+            for (let token of tokens) {
+                if (patterns.singleLineComment.test(token)) {
+                    break; // Skip the rest of the line if it's a single-line comment
+                } else if (patterns.multiLineCommentStart.test(token)) {
+                    // Skip until the end of the multi-line comment
+                    while (!patterns.multiLineCommentEnd.test(token) && tokens.length > 0) {
+                        token = tokens.shift();
+                    }
+                } else if (patterns.singleCommand.test(token)) {
+                    this.tokens.push({ type: 'SingleCommand', value: token });
+                } else if (patterns.blockOfCodeStart.test(token)) {
+                    // Collect tokens until the end of the block of code
+                    let blockTokens = [];
+                    while (!patterns.blockOfCodeEnd.test(token) && tokens.length > 0) {
+                        blockTokens.push(token);
+                        token = tokens.shift();
+                    }
+                    // Add the block of code as a single token
+                    this.tokens.push({ type: 'BlockOfCode', value: blockTokens.join(' ') });
+                } else if (patterns.operator.test(token)) {
+                    this.tokens.push({ type: 'Operator', value: token });
+                } else if (patterns.assignmentOperator.test(token)) {
+                    this.tokens.push({ type: 'AssignmentOperator', value: token });
+                } else if (patterns.identifier.test(token)) {
+                    this.tokens.push({ type: 'Identifier', value: token });
+                } else if (patterns.number.test(token)) {
+                    this.tokens.push({ type: 'Number', value: parseFloat(token) });
+                } else if (patterns.stringVariable.test(token)) {
+                    this.tokens.push({ type: 'StringVariable', value: token });
+                } else if (patterns.booleanVariable.test(token)) {
+                    this.tokens.push({ type: 'BooleanVariable', value: token });
+                } else if (patterns.integerVariable.test(token)) {
+                    this.tokens.push({ type: 'IntegerVariable', value: token });
+                }
+            }
+        }
+        return this.tokens;
+    }
+}
+
+class CoffeeParser {
+    constructor(input) {
+        this.lexer = new CoffeeLexer(input);
+        this.tokens = this.lexer.lex();
+        this.currentTokenIndex = 0;
+    }
+
+    // Advance to the next token
+    advance() {
+        this.currentTokenIndex++;
+    }
+
+    // Get the current token
+    getCurrentToken() {
+        return this.tokens[this.currentTokenIndex];
+    }
+
+    // Parse a primary expression (number, identifier, or parenthesized expression)
+    parsePrimaryExpression() {
+        const currentToken = this.getCurrentToken();
+        if (currentToken.type === 'Number' ||
+            currentToken.type === 'Identifier') {
+            this.advance();
+            return currentToken;
+        } else if (currentToken.value === '(') {
+            // If the current token is an opening parenthesis, parse the expression inside
+            this.advance();
+            const expression = this.parseExpression();
+            if (this.getCurrentToken().value !== ')') {
+                throw new Error("Expected ')' after expression");
+            }
+            this.advance(); // Consume the closing parenthesis
+            return expression;
+        } else {
+            throw new Error("Unexpected token: " + currentToken.value);
+        }
+    }
+
+    // Parse a binary expression (operator with two operands)
+    parseBinaryExpression() {
+        let left = this.parsePrimaryExpression();
+
+        while (this.getCurrentToken() && this.getCurrentToken().type === 'Operator') {
+            const operator = this.getCurrentToken().value;
+            this.advance();
+            const right = this.parsePrimaryExpression();
+            left = {
+                type: 'BinaryExpression',
+                operator: operator,
+                left: left,
+                right: right
+            };
+        }
+
+        return left;
+    }
+
+    // Parse an entire expression
+    parseExpression() {
+        return this.parseBinaryExpression();
+    }
+
+    // Parse the entire program
+    parseProgram() {
+        const program = [];
+        while (this.currentTokenIndex < this.tokens.length) {
+            program.push(this.parseExpression());
+        }
+        return program;
+    }
+}
+
+class CoffeeInterpreter {
+    constructor(parser) {
+        this.parser = parser;
+    }
+
+    // Evaluate a primary expression (number or identifier)
+    evaluatePrimaryExpression(node) {
+        if (node.type === 'Number') {
+            return node.value;
+        } else if (node.type === 'Identifier') {
+            // For simplicity, return the identifier's value as is
+            return node.value;
+        } else {
+            throw new Error("Unexpected node type: " + node.type);
+        }
+    }
+
+    // Evaluate a binary expression (operator with two operands)
+    evaluateBinaryExpression(node) {
+        const leftValue = this.evaluateExpression(node.left);
+        const rightValue = this.evaluateExpression(node.right);
+
+        switch (node.operator) {
+            case 'caffeine':
+                return leftValue * rightValue;
+            case 'frappe':
+                if (rightValue === 0) {
+                    throw new Error("Division by zero");
+                }
+                return leftValue / rightValue;
+            case 'sprinkles':
+                return leftValue + rightValue;
+            case 'ice':
+                return leftValue - rightValue;
+            default:
+                throw new Error("Unknown operator: " + node.operator);
+        }
+    }
+
+    // Evaluate an expression (either a primary expression or a binary expression)
+    evaluateExpression(node) {
+        if (node.type === 'BinaryExpression') {
+            return this.evaluateBinaryExpression(node);
+        } else {
+            return this.evaluatePrimaryExpression(node);
+        }
+    }
+
+    // Evaluate the entire program
+    evaluateProgram() {
+        const ast = this.parser.parseProgram();
+        const results = [];
+        for (let expression of ast) {
+            const result = this.evaluateExpression(expression);
+            results.push(result);
+        }
+        return results;
+    }
+}
+
+// Export the classes
+module.exports = {
+    CoffeeLexer,
+    CoffeeParser,
+    CoffeeInterpreter
+};
