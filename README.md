@@ -1,5 +1,5 @@
 
-![JAVACHIP GIF](JAVACHIP.gif)
+![JAVACHIP GIF](images/JAVACHIP.gif)
 
 ###### Created by: Nick Benson, Kaleb Powell, Caroline Conrad
 ---
