@@ -4,10 +4,10 @@
 ###### Created by: Nick Benson, Kaleb Powell, Caroline Conrad
 ---
 # JavaChip ☕️
-### Overview:
+### ☕️ Overview:
 JavaChip is a domain-specific programming language designed for coffee enthusiasts and baristas alike. It offers a unique syntax inspired by the world of coffee, allowing users to express themselves in a language that resonates with their passion for java. With features tailored to the coffee experience, JavaChip aims to provide a fun and intuitive way to write code while enjoying a cup of your favorite brew.
 
-### Instructions:
+### ☕️  Instructions:
 __1. Download & Set Up__
 - Download the JavaChip code from the repository
 - Ensure you have Visual Studio Code installed
@@ -19,7 +19,7 @@ __2. Running the Demo__
 ```bash
 node.js interpret.js demo.chip
 ```
-### Demo Code
+### ☕️  Demo Code
 ```JavaChip
 $ This is our demo code!
 -10 sprinkles 1
@@ -33,7 +33,7 @@ $$$
 This is a multiline comment
 $$$
 ```
-### Syntax Rules and Variable Types:
+### ☕️ Syntax Rules and Variable Types:
 
 | Syntax                | Description                                                                   |
 |-----------------------|-------------------------------------------------------------------------------|
@@ -51,7 +51,7 @@ $$$
 |                       | - Boolean: `isDecaf` 
 
 
-### Grammar:
+### ☕️ Grammar:
 ```
 <program> ::= <statement_list>
 
@@ -82,10 +82,7 @@ $$$
 <divide_operator> ::= "frappe"
 
 ```
-___
- ☕️ Feel free to brew up some code with JavaChip! ☕️
-___
-### State of the Language:
+### ☕️ State of the Language:
 As of right now, the only **working** pieces of our language are:
 
 - Tokenizing all the code
