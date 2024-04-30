@@ -86,6 +86,20 @@ ___
  ☕️ Feel free to brew up some code with JavaChip! ☕️
 ___
 ### State of the Language:
+As of right now, the only **working** pieces of our language are:
+
+- Tokenizing all the code
+- Simple arithmetic operations
+- `withLegs` command
+- `sips` (joining two numbers together)
+- Single and multiline comments
+
+Things that still need **improvement** include:
+
+- Variable assignment
+- Concatenation between strings
+- Booleans
+
 
 ---
 ###### langcraftSP24 -- Programming Languages; CIS 333; SP 2024
