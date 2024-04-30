@@ -33,6 +33,7 @@ class Lexer {
         const p_subtract = /\bice\b/;
         const p_string = /\*(.*?)\*/; // * example *
         const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; // Regular expression for identifying identifiers
+        const p_sips = /\bsips\b/; // Regular expression for the "sips" operator
 
         let inMultiLineComment = false;
 
@@ -77,7 +78,7 @@ class Lexer {
                     this.out.push({ "Type": Type.NUMBER, "value": parseFloat(token) });
                 } else if (p_integerVariable.test(token) || p_stringVariable.test(token) || p_booleanVariable.test(token)) {
                     this.out.push({ "Type": Type.IDENTIFIER, "value": token });
-                } else if (p_multiply.test(token) || p_divide.test(token) || p_add.test(token) || p_subtract.test(token)) {
+                } else if (p_multiply.test(token) || p_divide.test(token) || p_add.test(token) || p_subtract.test(token) || p_sips.test(token)) {
                     this.out.push({ "Type": Type.OPERATOR, "value": token });
                 } else if (p_identifier.test(token)) {
                     this.out.push({ "Type": Type.IDENTIFIER, "value": token });
@@ -93,6 +94,7 @@ class Lexer {
     }
 }
 
+
 class Parser {
     constructor(tokens) {
         this.tokens = tokens;
@@ -103,7 +105,6 @@ class Parser {
     nextToken() {
         this.index++;
         this.current_token = this.tokens[this.index] || null;
-
     }
 
     parse() {
@@ -111,10 +112,32 @@ class Parser {
             return null;  // Early exit if there are no tokens
         }
 
+        let left = this.parseExpression();
+
+        // Process as long as there are tokens and the current token is an operator
+        while (this.tokens[this.index] && (this.tokens[this.index].Type === Type.OPERATOR || this.tokens[this.index].value === 'sips')) {
+            const operator = this.tokens[this.index].value;
+            this.nextToken();
+
+            const right = this.parseExpression();
+
+            left = {
+                'Type': 'BinaryOperation',
+                'operator': operator,
+                'left': left,
+                'right': right
+            };
+        }
+
+        return left;
+    }
+
+    parseExpression() {
         const firstToken = this.tokens[this.index];
 
         if (firstToken.Type === Type.STRING) {
             // If the first token is a string, handle it appropriately
+            this.nextToken();
             return {
                 'Type': 'StringLiteral',
                 'value': firstToken.value
@@ -130,28 +153,6 @@ class Parser {
         };
         this.nextToken();
 
-        // Process as long as there are tokens and the current token is an operator
-        while (this.tokens[this.index] && this.tokens[this.index].Type === Type.OPERATOR) {
-            const operator = this.tokens[this.index].value;
-            this.nextToken();
-            if (!this.tokens[this.index] || this.tokens[this.index].Type !== Type.NUMBER) {
-                throw new Error("Syntax Error: Expected a number after operator");
-            }
-
-            const right = {
-                'Type': 'Literal',
-                'value': this.tokens[this.index].value
-            };
-
-            left = {
-                'Type': 'BinaryOperation',
-                'operator': operator,
-                'left': left,
-                'right': right
-            };
-            this.nextToken();
-        }
-
         return left;
     }
 }
@@ -159,59 +160,61 @@ class Parser {
 class Interpreter {
     constructor() {
         this.variables = {}; // place to store variables
+        this.stringAccumulator = ''; // Accumulator for string tokens
+        this.withLegsFlag = false; // Flag to track if 'withLegs' command is present
     }
 
     evaluateAST(ast) {
         switch (ast['Type']) {
             case 'Literal':
-                // Only return integer values for arithmetic operations
-                if (Number.isInteger(ast['value'])) {
-                    return ast['value'];
-                } else {
-                    throw new Error(`Unsupported literal type: ${typeof ast['value']}`);
+                // Return the value as is (number or string)
+                return ast['value'];
+            case 'StringLiteral':
+                // Handle string literals
+                if (this.withLegsFlag) {
+                    // Append '000' to the string if 'withLegs' command is present
+                    this.stringAccumulator += '000';
                 }
+                this.stringAccumulator += ast['value']; // Accumulate string tokens
+                return ast['value'];
             case 'BinaryOperation':
                 if (ast['operator'] === 'sprinkles') {
                     const leftVal = this.evaluateAST(ast['left']); // Evaluate left operand
                     const rightVal = this.evaluateAST(ast['right']); // Evaluate right operand
-                    // Check if both operands are strings, then concatenate
-                    if (typeof leftVal === 'string' && typeof rightVal === 'string') {
+                    // Check if both operands are integers, then perform addition
+                    if (Number.isInteger(leftVal) && Number.isInteger(rightVal)) {
                         return leftVal + rightVal;
                     } else {
-                        // Otherwise, perform addition
-                        return String(leftVal) + String(rightVal);
+                        throw new Error("Cannot add non-integer values");
                     }
+                } else if (ast['operator'] === 'sips') {
+                    const leftVal = this.evaluateAST(ast['left']); // Evaluate left operand
+                    const rightVal = this.evaluateAST(ast['right']); // Evaluate right operand
+                    // Concatenate strings without checking types
+                    return leftVal + ' ' + rightVal;
+                } else if (ast['operator'] === 'frappe') {
+                    if (ast['right'] === 0) {
+                        throw new Error("Division by zero"); // Handle division by zero
+                    }
+                    // If the operator is division, evaluate left and right operands and perform division
+                    return this.evaluateAST(ast['left']) / this.evaluateAST(ast['right']);
+                } else if (ast['operator'] === 'ice') {
+                    // If the operator is subtraction, evaluate left and right operands and perform subtraction
+                    return this.evaluateAST(ast['left']) - this.evaluateAST(ast['right']);
+                } else if (ast['operator'] === 'caffeine') {
+                    // If the operator is multiplication, evaluate left and right operands and perform multiplication
+                    return this.evaluateAST(ast['left']) * this.evaluateAST(ast['right']);
+                } else {
+                    throw new Error(`Unsupported operator: ${ast['operator']}`);
                 }
-                const leftVal = this.evaluateAST(ast['left']); // Recursively evaluate the left child
-                const rightVal = this.evaluateAST(ast['right']); // Recursively evaluate the right child
-
-                // Perform the operation based on the operator
-                switch (ast['operator']) {
-                    case 'ice':
-                        return leftVal - rightVal;
-                    case 'caffeine':
-                        return leftVal * rightVal;
-                    case 'frappe':
-                        if (rightVal === 0) {
-                            throw new Error("Division by zero"); // Handle division by zero
-                        }
-                        return leftVal / rightVal;
-                    default:
-                        throw new Error(`Unsupported operator: ${ast['operator']}`);
-                }
-
             case 'Assignment':
                 // Evaluate the value of the assignment and store it in the variable
                 const value = this.evaluateAST(ast['value']);
                 // For simplicity, assume the variable is already defined and just return its value
                 return value;
-            case 'StringLiteral': // Handle the StringLiteral node type
-                return ast['value']; // Simply return the string value
-
             case 'Order': // Handle the "order" command
                 console.log(ast['value']); // Print the value of the "order" command
                 return null; // Return null since "order" command doesn't have a value
-
             default:
                 throw new Error(`Unsupported node type: ${ast['Type']}`);
         }
