@@ -292,4 +292,11 @@ for (let line of lines) {
         console.log(jsonResult);
     }
 }
-fs.writeFileSync('output.json', JSON.stringify(output, null, 2), 'utf8');
+
+
+
+const consoleOutputs = ["hi"];
+
+
+fs.writeFileSync('./output.json', JSON.stringify(consoleOutputs, null, 2), 'utf8');
+
