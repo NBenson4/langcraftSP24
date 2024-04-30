@@ -51,15 +51,13 @@ order withLegs *Your coffee is ready! Enjoy!*
 |-----------------------|-------------------------------------------------------------------------------|
 | Single Line Comments  | Use `$` to add comments to your code.                                         |
 | Multi-Line Comments   | Enclose multi-line comments between `$$$`.                                    |
-| Single Commands       | End each command with `({)`.                                                  |
-| Blocks of Code        | Begin and end blocks of code with `\_/`.                                        |
 | Assignment Operator   | Use `~` for variable assignment.                                               |
 | Operators             | - Multiplication: `caffeine`                                                   |
 |                       | - Division: `frappe`                                                           |
 |                       | - Addition: `sprinkles`                                                        |
 |                       | - Subtraction: `ice`                                                           |
 | Commands              | - `order`: Prints everything following this command to the console.           |                                                |
-|                       | - `withLegs`: adds ☕️ to the beginning of a string |
+|                       | - `withLegs`: adds ({) to the end of a string |
 | Variable Types        | - Integer: `oz`                                                                |
 |                       | - String: `roast` (strings are enclosed in `*`)                               |
 |                       | - Boolean: `isDecaf` 
