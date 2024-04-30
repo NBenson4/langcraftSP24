@@ -39,16 +39,16 @@ $$$
 |-----------------------|-------------------------------------------------------------------------------|
 | Single Line Comments  | Use `$` to add comments to your code.                                         |
 | Multi-Line Comments   | Enclose multi-line comments between `$$$`.                                    |
-| Assignment Operator   | Use `~` for variable assignment.                                               |
-| Operators             | - Multiplication: `caffeine`                                                   |
-|                       | - Division: `frappe`                                                           |
-|                       | - Addition: `sprinkles`                                                        |
-|                       | - Subtraction: `ice`                                                           |
-| Commands              | - `order`: Prints everything following this command to the console.           |                                                |
-|                       | - `withLegs`: adds ({) to the end of a string |
-| Variable Types        | - Integer: `oz`                                                                |
+| Assignment Operator   | Use `~` for variable assignment.                                              |
+| Operators             | - Multiplication: `caffeine`                                                  |
+|                       | - Division: `frappe`                                                          |
+|                       | - Addition: `sprinkles`                                                       |
+|                       | - Subtraction: `ice`                                                          |
+| Commands              | - `order`: Prints everything following this command to the console.           |                                                
+|                       | - `withLegs`: adds ({) to the end of a string                                 |
+| Variable Types        | - Integer: `oz`                                                               |
 |                       | - String: `roast` (strings are enclosed in `*`)                               |
-|                       | - Boolean: `isDecaf` 
+|                       | - Boolean: `isDecaf`                                                          |
 
 
 ### ☕️ Grammar:
