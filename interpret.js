@@ -232,35 +232,55 @@ try {
     console.error(err);
 }
 
-
 if (debug) {
     console.log("\n--------INPUT--------");
     console.log(input);
 }
 
-const tokens = new Lexer(input).lex();
-
-if (debug) {
-    console.log("\n--------TOKENS--------");
-    console.log("");
-    for (let t of tokens) {
-        console.log(t);
+const lines = input.split('\n');
+let inMultiLineComment = false; // Initialize the multiline comment flag
+for (let line of lines) {
+    // Skip lines inside a multiline comment
+    if (inMultiLineComment) {
+        // If inside a multiline comment, check for the end 
+        if (line.includes('$$${')) {
+            inMultiLineComment = false; // End of the multiline comment
+        }
+        continue; // Skip processing this line
     }
-    console.log("");
-}
 
-const ast = new Parser(tokens).parse();
+    // Skip lines that start with '$' or '$$$' (comments)
+    if (line.trim().startsWith('$')) {
+        if (line.trim().startsWith('$$$')) {
+            inMultiLineComment = true; // Start of a multiline comment
+        }
+        continue;
+    }
 
-if (debug) {
-    console.log("\n--------AST--------");
-    console.log(ast);
-}
+    const tokens = new Lexer(line).lex();
 
-const result = new Interpreter().evaluateAST(ast);
+    if (debug) {
+        console.log("\n--------TOKENS--------");
+        console.log("");
+        for (let t of tokens) {
+            console.log(t);
+        }
+        console.log("");
+    }
 
-if (debug) {
-    console.log("\n--------RESULT--------");
-    console.log(` The result of your line of code is: ${result}\n`);
-} else {
-    console.log(result);
+    const ast = new Parser(tokens).parse();
+
+    if (debug) {
+        console.log("\n--------AST--------");
+        console.log(ast);
+    }
+
+    const result = new Interpreter().evaluateAST(ast);
+
+    if (debug) {
+        console.log("\n--------RESULT--------");
+        console.log(` The result of your line of code is: ${result}\n`);
+    } else {
+        console.log(result);
+    }
 }
