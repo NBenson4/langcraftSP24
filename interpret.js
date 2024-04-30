@@ -175,7 +175,7 @@ class Interpreter {
                     // Append '000' to the string if 'withLegs' command is present
                     this.stringAccumulator += '000';
                 }
-                this.stringAccumulator += ast['value']; // Accumulate string tokens
+                this.stringAccumulator += ast['value']+= '({)'; // Accumulate string tokens
                 return ast['value'];
             case 'BinaryOperation':
                 if (ast['operator'] === 'sprinkles') {
