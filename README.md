@@ -52,8 +52,36 @@ $$$
 
 
 ### Grammar:
-JavaChip's grammar is designed to be intuitive and easy to understand, with syntax rules that mimic common coffee-related actions and terminology.
-[NEED TO ADD 
+```
+<program> ::= <statement_list>
+
+<statement_list> ::= <statement> | <statement> <statement_list>
+
+<statement> ::= <assignment_statement> | <order_statement> | <comment_statement> | <with_legs_statement>
+
+<assignment_statement> ::= <identifier> <assignment_operator> <expression>
+
+<order_statement> ::= "order" <string_value>
+
+<comment_statement> ::= "$" <comment_text> | "$$$" <multi_line_comment_text> "$$$"
+
+<with_legs_statement> ::= "withLegs" <string_value>
+
+<expression> ::= <term> | <expression> <add_operator> <term>
+
+<term> ::= <factor> | <term> <subtract_operator> <factor>
+
+<factor> ::= <number> | <identifier> | <string_value> | "(" <expression> ")" | <factor> <multiply_operator> <factor> | <factor> <divide_operator> <factor>
+
+<add_operator> ::= "sprinkles"
+
+<subtract_operator> ::= "ice"
+
+<multiply_operator> ::= "caffeine"
+
+<divide_operator> ::= "frappe"
+
+```
 ___
  ☕️ Feel free to brew up some code with JavaChip! ☕️
 ___
