@@ -1,5 +1,5 @@
-const consoleOutputs = [];
-const Type1 = {
+const consoleOutputs = []; // store console outputs for JSON output
+const Type1 = { 
     INPUT: "INPUT",
     TOKENS: "TOKENS",
     AST: "AST",
@@ -19,18 +19,17 @@ const Type = {
 class Lexer {
     constructor(input) {
         this.i = input.split(/\n/); // Split input string on newlines
-        this.out = [];
+        this.out = []; 
     }
 
     lex(line) {
         // Patterns to check 
         const p_singleLineComment = /\$.*$/;
         const p_multiLineComment = /\$\$\$(.|\n)*?\$\$\$/;
-        const p_orderCommand = /^order$/; // Regular expression for the "order" keyword to print to console
+        const p_orderCommand = /^order$/; 
         const p_singleCommand = /[^\s{}]+(?=\(\{\))/;
-        const p_blockOfCode = /\\_\/((.|\n)*?)\\_\//;
+        const p_blockOfCode = /\\_\/((.|\n)*?)\\_\//; // supposed to be \_/ but can't because otherwise it would be a comment
         const p_assignmentOperator = /~/;
-        const p_unaryOperator = /dirty/;
         const p_number = /^-?\d+(\.\d+)?$/;
         const p_integerVariable = /^-?\d+(\.\d+)?$/;
         const p_stringVariable = /\b\*(.*?)\*\b/;
@@ -40,27 +39,23 @@ class Lexer {
         const p_add = /\bsprinkles\b/;
         const p_subtract = /\bice\b/;
         const p_string = /\*(.*?)\*/; // * example *
-        const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; // Regular expression for identifying identifiers
-        const p_sips = /\bsips\b/; // Regular expression for the "sips" operator
+        const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; 
+        const p_sips = /\bsips\b/; // to add two strings togetther
 
-        let inMultiLineComment = false;
+        let inMultiLineComment = false; //checks for multiline comments
 
         for (let line of this.i) {
-            if (inMultiLineComment) {
-                // If inside a multiline comment, check for the end 
+            if (inMultiLineComment) { //checks if inside a multiline comment
                 if (line.includes('$$${')) {
-                    inMultiLineComment = false; // End of the multiline comment
+                    inMultiLineComment = false; 
                 }
-                continue; // Skip processing this line
+                continue; 
             }
-
-            if (line.startsWith('$$$')) {
-                // Start of multiline comment
+            if (line.startsWith('$$$')) { //checks for start of multiline
                 inMultiLineComment = true;
-                continue; // Skip processing this line
+                continue; 
             } else if (line.trim().startsWith('$')) {
-                // Skip single-line comments
-                continue;
+                continue; //skips single line comments
             }
 
             // Split the line into tokens based on whitespace
@@ -72,7 +67,7 @@ class Lexer {
                 if (stringMatches) {
                     const stringValue = stringMatches[1];
                     this.out.push({ "Type": Type.STRING, "value": stringValue });
-                    line = line.replace(p_string, ''); // Remove string from line
+                    line = line.replace(p_string, ''); 
                 }
                 if (p_singleCommand.test(token)) {
                     this.out.push({ "Type": Type.EOC, "value": token.match(p_singleCommand)[0] });
@@ -80,8 +75,6 @@ class Lexer {
                     this.out.push({ "Type": Type.BLOCK, "value": token.match(p_blockOfCode)[1] });
                 } else if (p_assignmentOperator.test(token)) {
                     this.out.push({ "Type": Type.EQUALS, "value": token });
-                } else if (p_unaryOperator.test(token)) {
-                    this.out.push({ "Type": Type.OPERATOR, "value": token });
                 } else if (p_number.test(token)) {
                     this.out.push({ "Type": Type.NUMBER, "value": parseFloat(token) });
                 } else if (p_integerVariable.test(token) || p_stringVariable.test(token) || p_booleanVariable.test(token)) {
@@ -102,7 +95,6 @@ class Lexer {
     }
 }
 
-
 class Parser {
     constructor(tokens) {
         this.tokens = tokens;
@@ -110,14 +102,15 @@ class Parser {
         this.current_token = this.tokens[this.index] || null;
     }
 
+    
     nextToken() {
         this.index++;
         this.current_token = this.tokens[this.index] || null;
     }
 
-    parse() {
+    parse() { //parse tokens into AST
         if (!this.tokens.length) {
-            return null;  // Early exit if there are no tokens
+            return null;  // if there are no tokens, exit
         }
 
         let left = this.parseExpression();
@@ -143,15 +136,14 @@ class Parser {
     parseExpression() {
         const firstToken = this.tokens[this.index];
 
+        //checks to see if first token is a number or string
         if (firstToken.Type === Type.STRING) {
-            // If the first token is a string, handle it appropriately
             this.nextToken();
             return {
                 'Type': 'StringLiteral',
                 'value': firstToken.value
             };
         } else if (firstToken.Type !== Type.NUMBER) {
-            // If the first token is not a number or string, throw an error
             throw new Error("Syntax Error: Expected a number or string at the beginning of the expression.");
         }
 
@@ -168,7 +160,7 @@ class Parser {
 class Interpreter {
     constructor() {
         this.variables = {}; // place to store variables
-        this.stringAccumulator = ''; // Accumulator for string tokens
+        this.stringAccumulator = ''; // place for strings
         this.withLegsFlag = false; // Flag to track if 'withLegs' command is present
     }
 
@@ -178,51 +170,42 @@ class Interpreter {
                 // Return the value as is (number or string)
                 return ast['value'];
             case 'StringLiteral':
-                // Handle string literals
                 if (this.withLegsFlag) {
-                    // Append '000' to the string if 'withLegs' command is present
-                    this.stringAccumulator += '000';
+                    this.stringAccumulator += '({)'; // adds ({) to end of string
                 }
-                this.stringAccumulator += ast['value']+= '({)'; // Accumulate string tokens
+                this.stringAccumulator += ast['value']+= '({)'; 
                 return ast['value'];
             case 'BinaryOperation':
                 if (ast['operator'] === 'sprinkles') {
                     const leftVal = this.evaluateAST(ast['left']); // Evaluate left operand
                     const rightVal = this.evaluateAST(ast['right']); // Evaluate right operand
-                    // Check if both operands are integers, then perform addition
                     if (Number.isInteger(leftVal) && Number.isInteger(rightVal)) {
                         return leftVal + rightVal;
                     } else {
                         throw new Error("Cannot add non-integer values");
                     }
-                } else if (ast['operator'] === 'sips') {
+                } else if (ast['operator'] === 'sips') { //trying to add two strings together, but it only prints the first value in the output
                     const leftVal = this.evaluateAST(ast['left']); // Evaluate left operand
                     const rightVal = this.evaluateAST(ast['right']); // Evaluate right operand
-                    // Concatenate strings without checking types
-                    return leftVal + ' ' + rightVal;
+                    return String(leftVal) + ' ' + String(rightVal);
                 } else if (ast['operator'] === 'frappe') {
                     if (ast['right'] === 0) {
                         throw new Error("Division by zero"); // Handle division by zero
-                    }
-                    // If the operator is division, evaluate left and right operands and perform division
+                }
                     return this.evaluateAST(ast['left']) / this.evaluateAST(ast['right']);
                 } else if (ast['operator'] === 'ice') {
-                    // If the operator is subtraction, evaluate left and right operands and perform subtraction
                     return this.evaluateAST(ast['left']) - this.evaluateAST(ast['right']);
                 } else if (ast['operator'] === 'caffeine') {
-                    // If the operator is multiplication, evaluate left and right operands and perform multiplication
                     return this.evaluateAST(ast['left']) * this.evaluateAST(ast['right']);
                 } else {
                     throw new Error(`Unsupported operator: ${ast['operator']}`);
                 }
-            case 'Assignment':
-                // Evaluate the value of the assignment and store it in the variable
+            case 'Assignment': //trying to implement variable assignment if it's already assigned
                 const value = this.evaluateAST(ast['value']);
-                // For simplicity, assume the variable is already defined and just return its value
                 return value;
-            case 'Order': // Handle the "order" command
+            case 'Order': 
                 console.log(ast['value']); // Print the value of the "order" command
-                return null; // Return null since "order" command doesn't have a value
+                return null; 
             default:
                 throw new Error(`Unsupported node type: ${ast['Type']}`);
         }
@@ -248,23 +231,21 @@ try {
 if (debug) {
     console.log("\n--------INPUT--------");
     console.log(input);
-    consoleOutputs.push({ "section": Type1.INPUT, "content": input });
+    consoleOutputs.push({ "section": Type1.INPUT, "content": input }); //pushes to JSON output
 
 }
 
 const lines = input.split('\n');
-let inMultiLineComment = false; // Initialize the multiline comment flag
-for (let line of lines) {
-    // Skip lines inside a multiline comment
-    if (inMultiLineComment) {
-        // If inside a multiline comment, check for the end 
-        if (line.includes('$$${')) {
-            inMultiLineComment = false; // End of the multiline comment
-        }
-        continue; // Skip processing this line
-    }
 
-    // Skip lines that start with '$' or '$$$' (comments)
+//skip interpreting comments
+let inMultiLineComment = false; 
+for (let line of lines) {
+    if (inMultiLineComment) {
+        if (line.includes('$$${')) {
+            inMultiLineComment = false; 
+        }
+        continue; 
+    }
     if (line.trim().startsWith('$')) {
         if (line.trim().startsWith('$$$')) {
             inMultiLineComment = true; // Start of a multiline comment
@@ -282,7 +263,7 @@ for (let line of lines) {
             
         }
         console.log("");
-        consoleOutputs.push({ "section": Type1.TOKENS, "content": tokens });
+        consoleOutputs.push({ "section": Type1.TOKENS, "content": tokens }); //pushes to JSON output
 
     }
 
@@ -291,7 +272,7 @@ for (let line of lines) {
     if (debug) {
         console.log("\n--------AST--------");
         console.log(ast);
-        consoleOutputs.push({ "section": Type1.AST, "content": ast });
+        consoleOutputs.push({ "section": Type1.AST, "content": ast }); //pushes to JSON output
 
     }
 
@@ -303,7 +284,7 @@ for (let line of lines) {
     if (debug) {
         console.log("\n--------RESULT--------");
         console.log(` The result of your line of code is: ${result}\n`);
-        consoleOutputs.push({ "section": Type1.RESULT, "content": result });
+        consoleOutputs.push({ "section": Type1.RESULT, "content": result }); //pushes to JSON output
 
     } else {
         console.log(result);
@@ -311,9 +292,5 @@ for (let line of lines) {
     }
 }
 
-
-
-
-
-fs.writeFileSync('./output.json', JSON.stringify(consoleOutputs, null, 2), 'utf8');
+fs.writeFileSync('./output.json', JSON.stringify(consoleOutputs, null, 2), 'utf8'); //writes the JSON file
 
