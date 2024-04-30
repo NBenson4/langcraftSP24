@@ -91,7 +91,7 @@ As of right now, the only **working** pieces of our language are:
 - `sips` (joining two numbers together)
 - Single and multiline comments
 
-Things that still need **improvement** include:
+Things that are **not working** include:
 
 - Variable assignment
 - Concatenation between strings
