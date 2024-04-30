@@ -1,4 +1,11 @@
-1 sprinkles 1
-1 sips 1000
+$ This is our demo code!
+-10 sprinkles 1
+5 frappe 5
+50 ice 10
+100 caffeine -20
+10 sips 555
 *hi* sips *here*
 withLegs *hello*
+$$$ 
+This is a multiline Comments
+$$$
