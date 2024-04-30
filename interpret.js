@@ -281,11 +281,15 @@ for (let line of lines) {
     }
 
     const result = new Interpreter().evaluateAST(ast);
+    const jsonResult = JSON.stringify(result); // Convert result to JSON string
+
 
     if (debug) {
         console.log("\n--------RESULT--------");
         console.log(` The result of your line of code is: ${result}\n`);
     } else {
         console.log(result);
+        console.log(jsonResult);
     }
 }
+fs.writeFileSync('output.json', JSON.stringify(output, null, 2), 'utf8');
