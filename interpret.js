@@ -1,4 +1,3 @@
-
 const Type = {
     IDENTIFIER: "IDENTIFIER",
     OPERATOR: "OPERATOR",
@@ -7,11 +6,7 @@ const Type = {
     NUMBER: "NUMBER",
     STRING: "STRING",
     ORDER: "ORDER"
-    
 };
-
-
-
 
 class Lexer {
     constructor(input) {
@@ -39,9 +34,8 @@ class Lexer {
         const p_string = /\*(.*?)\*/; // * example *
         const p_identifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/; // Regular expression for identifying identifiers
 
-
         let inMultiLineComment = false;
-       
+
         for (let line of this.i) {
             if (inMultiLineComment) {
                 // If inside a multiline comment, check for the end 
@@ -50,7 +44,7 @@ class Lexer {
                 }
                 continue; // Skip processing this line
             }
-    
+
             if (line.startsWith('$$$')) {
                 // Start of multiline comment
                 inMultiLineComment = true;
@@ -59,7 +53,6 @@ class Lexer {
                 // Skip single-line comments
                 continue;
             }
-    
 
             // Split the line into tokens based on whitespace
             const tokens = line.split(/\s+/);
@@ -71,7 +64,7 @@ class Lexer {
                     const stringValue = stringMatches[1];
                     this.out.push({ "Type": Type.STRING, "value": stringValue });
                     line = line.replace(p_string, ''); // Remove string from line
-                }    
+                }
                 if (p_singleCommand.test(token)) {
                     this.out.push({ "Type": Type.EOC, "value": token.match(p_singleCommand)[0] });
                 } else if (p_blockOfCode.test(token)) {
@@ -116,12 +109,10 @@ class Parser {
     parse() {
         if (!this.tokens.length) {
             return null;  // Early exit if there are no tokens
-        
-
         }
-        
+
         const firstToken = this.tokens[this.index];
-    
+
         if (firstToken.Type === Type.STRING) {
             // If the first token is a string, handle it appropriately
             return {
@@ -169,6 +160,7 @@ class Interpreter {
     constructor() {
         this.variables = {}; // place to store variables
     }
+
     evaluateAST(ast) {
         switch (ast['Type']) {
             case 'Literal':
@@ -179,26 +171,35 @@ class Interpreter {
                     throw new Error(`Unsupported literal type: ${typeof ast['value']}`);
                 }
             case 'BinaryOperation':
-                const leftVal = this.evaluateAST(ast['left']);  // Recursively evaluate the left child
-                const rightVal = this.evaluateAST(ast['right']);  // Recursively evaluate the right child
-
-            // Perform the operation based on the operator
-            switch (ast['operator']) {
-                case 'sprinkles':
-                    return leftVal + rightVal;
-                case 'ice':
-                    return leftVal - rightVal;
-                case 'caffeine':
-                    return leftVal * rightVal;
-                case 'frappe':
-                    if (rightVal === 0) {
-                        throw new Error("Division by zero");  // Handle division by zero
+                if (ast['operator'] === 'sprinkles') {
+                    const leftVal = this.evaluateAST(ast['left']); // Evaluate left operand
+                    const rightVal = this.evaluateAST(ast['right']); // Evaluate right operand
+                    // Check if both operands are strings, then concatenate
+                    if (typeof leftVal === 'string' && typeof rightVal === 'string') {
+                        return leftVal + rightVal;
+                    } else {
+                        // Otherwise, perform addition
+                        return String(leftVal) + String(rightVal);
                     }
-                    return leftVal / rightVal;
-                default:
-                    throw new Error(`Unsupported operator: ${ast['operator']}`);
-            }
-        
+                }
+                const leftVal = this.evaluateAST(ast['left']); // Recursively evaluate the left child
+                const rightVal = this.evaluateAST(ast['right']); // Recursively evaluate the right child
+
+                // Perform the operation based on the operator
+                switch (ast['operator']) {
+                    case 'ice':
+                        return leftVal - rightVal;
+                    case 'caffeine':
+                        return leftVal * rightVal;
+                    case 'frappe':
+                        if (rightVal === 0) {
+                            throw new Error("Division by zero"); // Handle division by zero
+                        }
+                        return leftVal / rightVal;
+                    default:
+                        throw new Error(`Unsupported operator: ${ast['operator']}`);
+                }
+
             case 'Assignment':
                 // Evaluate the value of the assignment and store it in the variable
                 const value = this.evaluateAST(ast['value']);
@@ -206,16 +207,17 @@ class Interpreter {
                 return value;
             case 'StringLiteral': // Handle the StringLiteral node type
                 return ast['value']; // Simply return the string value
-            
+
             case 'Order': // Handle the "order" command
                 console.log(ast['value']); // Print the value of the "order" command
                 return null; // Return null since "order" command doesn't have a value
-            
+
             default:
                 throw new Error(`Unsupported node type: ${ast['Type']}`);
         }
-        }
     }
+}
+
 
 
 let debug = true;
