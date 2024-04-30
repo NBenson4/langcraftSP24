@@ -30,7 +30,7 @@ $ This is our demo code!
 *hi* sips *here*
 withLegs *hello*
 $$$ 
-This is a multiline Comments
+This is a multiline comment
 $$$
 ```
 ### Syntax Rules and Variable Types:
