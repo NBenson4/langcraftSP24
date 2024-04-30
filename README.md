@@ -21,29 +21,17 @@ node.js interpret.js demo.chip
 ```
 ### Demo Code
 ```JavaChip
-$$$ This is the sample demo code for JavaChip
-
-order *Welcome to the JavaChip Coffee Shop!*
-
-oz ~ 12
-roast ~ *dark* 
-isDecaf ~ false  
-
-order *Your coffee order:*
-order *Size:* sprinkles oz sprinkles *ounces*
-order *Roast:* sprinkles roast
-order *Decaf:* sprinkles isDecaf
-
-
-caffeineContent ~ oz * 5  
-order *Caffeine Content:* sprinkles caffeineContent sprinkles *mg*
-
-
-sugar ~ 2  
-finalOz ~ oz sprinkles sugar  
-order *Final Size with Sugar:* sprinkle finalOz sprinkle *ounces*
-
-order withLegs *Your coffee is ready! Enjoy!*
+$ This is our demo code!
+-10 sprinkles 1
+5 frappe 5
+50 ice 10
+100 caffeine -20
+10 sips 555
+*hi* sips *here*
+withLegs *hello*
+$$$ 
+This is a multiline Comments
+$$$
 ```
 ### Syntax Rules and Variable Types:
 
