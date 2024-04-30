@@ -1,3 +1,238 @@
 [
-  "hi"
+  {
+    "section": "INPUT",
+    "content": "$ This is our demo code!\n-10 sprinkles 1\n5 frappe 5\n50 ice 10\n100 caffeine -20\n10 sips 555\n*hi* sips *here*\nwithLegs *hello*\n$$$ \nThis is a multiline comment\n$$$"
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "NUMBER",
+        "value": -10
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "sprinkles"
+      },
+      {
+        "Type": "NUMBER",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "BinaryOperation",
+      "operator": "sprinkles",
+      "left": {
+        "Type": "Literal",
+        "value": -10
+      },
+      "right": {
+        "Type": "Literal",
+        "value": 1
+      }
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": -9
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "NUMBER",
+        "value": 5
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "frappe"
+      },
+      {
+        "Type": "NUMBER",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "BinaryOperation",
+      "operator": "frappe",
+      "left": {
+        "Type": "Literal",
+        "value": 5
+      },
+      "right": {
+        "Type": "Literal",
+        "value": 5
+      }
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": 1
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "NUMBER",
+        "value": 50
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "ice"
+      },
+      {
+        "Type": "NUMBER",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "BinaryOperation",
+      "operator": "ice",
+      "left": {
+        "Type": "Literal",
+        "value": 50
+      },
+      "right": {
+        "Type": "Literal",
+        "value": 10
+      }
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": 40
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "NUMBER",
+        "value": 100
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "caffeine"
+      },
+      {
+        "Type": "NUMBER",
+        "value": -20
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "BinaryOperation",
+      "operator": "caffeine",
+      "left": {
+        "Type": "Literal",
+        "value": 100
+      },
+      "right": {
+        "Type": "Literal",
+        "value": -20
+      }
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": -2000
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "NUMBER",
+        "value": 10
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "sips"
+      },
+      {
+        "Type": "NUMBER",
+        "value": 555
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "BinaryOperation",
+      "operator": "sips",
+      "left": {
+        "Type": "Literal",
+        "value": 10
+      },
+      "right": {
+        "Type": "Literal",
+        "value": 555
+      }
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": "10 555"
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "STRING",
+        "value": "hi"
+      },
+      {
+        "Type": "STRING",
+        "value": "here"
+      },
+      {
+        "Type": "OPERATOR",
+        "value": "sips"
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "StringLiteral",
+      "value": "hi({)"
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": "hi({)"
+  },
+  {
+    "section": "TOKENS",
+    "content": [
+      {
+        "Type": "STRING",
+        "value": "hello"
+      },
+      {
+        "Type": "IDENTIFIER",
+        "value": "withLegs"
+      }
+    ]
+  },
+  {
+    "section": "AST",
+    "content": {
+      "Type": "StringLiteral",
+      "value": "hello({)"
+    }
+  },
+  {
+    "section": "RESULT",
+    "content": "hello({)"
+  }
 ]

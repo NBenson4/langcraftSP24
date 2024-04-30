@@ -1,3 +1,11 @@
+const consoleOutputs = [];
+const Type1 = {
+    INPUT: "INPUT",
+    TOKENS: "TOKENS",
+    AST: "AST",
+    RESULT: "RESULT"
+};
+
 const Type = {
     IDENTIFIER: "IDENTIFIER",
     OPERATOR: "OPERATOR",
@@ -240,6 +248,8 @@ try {
 if (debug) {
     console.log("\n--------INPUT--------");
     console.log(input);
+    consoleOutputs.push({ "section": Type1.INPUT, "content": input });
+
 }
 
 const lines = input.split('\n');
@@ -269,8 +279,11 @@ for (let line of lines) {
         console.log("");
         for (let t of tokens) {
             console.log(t);
+            
         }
         console.log("");
+        consoleOutputs.push({ "section": Type1.TOKENS, "content": tokens });
+
     }
 
     const ast = new Parser(tokens).parse();
@@ -278,15 +291,20 @@ for (let line of lines) {
     if (debug) {
         console.log("\n--------AST--------");
         console.log(ast);
+        consoleOutputs.push({ "section": Type1.AST, "content": ast });
+
     }
 
     const result = new Interpreter().evaluateAST(ast);
+    
     const jsonResult = JSON.stringify(result); // Convert result to JSON string
 
 
     if (debug) {
         console.log("\n--------RESULT--------");
         console.log(` The result of your line of code is: ${result}\n`);
+        consoleOutputs.push({ "section": Type1.RESULT, "content": result });
+
     } else {
         console.log(result);
         console.log(jsonResult);
@@ -295,7 +313,6 @@ for (let line of lines) {
 
 
 
-const consoleOutputs = ["hi"];
 
 
 fs.writeFileSync('./output.json', JSON.stringify(consoleOutputs, null, 2), 'utf8');
